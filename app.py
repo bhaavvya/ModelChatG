@@ -38,6 +38,9 @@ class Summary(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
 
+# Create the database and tables
+with app.app_context():
+    db.create_all()
 class QuestionAnswer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(500), nullable=False)
@@ -62,6 +65,10 @@ graph_model = models.resnet50(pretrained=True)
 num_classes = len(graph_labels)
 graph_model.fc = torch.nn.Linear(graph_model.fc.in_features, num_classes)
 graph_model.eval()
+
+# def summarize_text_from_word(text):
+#     chunks = [text[i:i + 1000] for i in range(0, len(text), 1000)]
+#     return "".join(summarizer(chunk, max_length=130, min_length=40, do_sample=False)[0]["summary_text"] for chunk in chunks)
 
 def preprocess_text(text):
     text = re.sub(r'\s+', ' ', text)  # Replace multiple spaces/newlines with a single space
@@ -101,8 +108,7 @@ def extract_images_from_ppt(ppt_path):
 
 # Function to extract text from an image using OCR
 def extract_text_from_image(image_path):
-    image = Image()
-    image = image.open(image_path)
+    image = Image.open(image_path)
     return pytesseract.image_to_string(image)
 
 # Extract text from PDF
@@ -121,6 +127,15 @@ def read_word_file(file_path):
     for para in doc.paragraphs:
         full_text.append(para.text)
     return '\n'.join(full_text)
+
+# Summarize text
+# def summarize_text(text):
+#     chunks = [text[i:i + 1000] for i in range(0, len(text), 1000)]
+#     return "".join(summarizer(chunk, max_length=102, min_length=40, do_sample=False)[0]["summary_text"] for chunk in chunks)
+
+# def summarize_text_from_ppt(text):
+#     chunks = [text[i:i + 1000] for i in range(0, len(text), 1000)]
+#     return "".join(summarizer(chunk, max_length=130, min_length=30, do_sample=False)[0]["summary_text"] for chunk in chunks)
 
 # Extract limited images from PDF
 def extract_limited_images_from_pdf(pdf_path, image_dir, limit=4):
@@ -197,82 +212,9 @@ def answer_question(question, context):
     )
     return response.choices[0].message.content
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    status = "Leverage the chatbot's analysis tool for your documents.\nUpload your Document to access chat."
-    result = None
-    query = None
-    result_sum = None
-    history = QuestionAnswer.query.order_by(QuestionAnswer.timestamp.desc()).all()
 
-    if request.method == "POST":
-        if "file" in request.files:
-            file = request.files["file"]
-            if file.filename:
-                # Save the uploaded file
-                file_path = os.path.join("uploads", file.filename)
-                file.save(file_path)
-
-                # Determine the file type
-                if file.filename.endswith(".pdf"):
-                    text = extract_text_from_pdf(file_path)
-                    summary = summ(text)
-                    summary = format_bullet_points(summary)
-                    new_summary = Summary(content=summary)
-                    db.session.add(new_summary)
-                    db.session.commit()
-
-                    session['summary_id'] = new_summary.id
-                    result_sum = summary
-                    status = "PDF processed and summary generated."
-
-                elif file.filename.endswith((".ppt", ".pptx")):
-                    text = extract_text_from_ppt(file_path)
-                    summary = summ(text)
-                    extracted_images = extract_images_from_ppt(file_path)
-                    descriptions = [summary]
-                    for image_file in extracted_images:
-                        extracted_text = extract_text_from_image(image_file)
-                        descriptions.append(extracted_text)
-                    result = "\n".join(descriptions)
-                    summary = format_bullet_points(summary)
-                    result_sum = Summary(content=summary)
-                    db.session.add(result_sum)
-                    db.session.commit()
-                    session['summary_id'] = result_sum.id
-                    status = "PPT processed and descriptions generated."
-
-                elif file.filename.endswith((".doc", ".docx")):
-                    text = read_word_file(file_path)
-                    summary = summ(text)
-                    new_summary = Summary(content=summary)
-                    db.session.add(new_summary)
-                    db.session.commit()
-
-                    session['summary_id'] = new_summary.id
-                    summary = format_bullet_points(summary)
-                    result_sum = summary
-                    status = "Word document processed and summary generated."
-
-        elif "query" in request.form:
-            query = request.form["query"]
-            summary_id = session.get('summary_id')
-
-            if summary_id:
-                summary = Summary.query.get(summary_id)
-                if summary:
-                    context = summary.content
-                    result = answer_question(query, context)
-                    new_qa = QuestionAnswer(question=query, answer=result)
-                    db.session.add(new_qa)
-                    db.session.commit()
-                    status = "Question answered based on the provided context."
-                else:
-                    status = "Summary not found for the provided context."
-            else:
-                status = "No summary available to provide context for the query."
-html = """
-<!DOCTYPE html>
+html_template = """
+   <!DOCTYPE html>
    <html lang="en">
    <head>
        <meta charset="UTF-8">
@@ -506,9 +448,97 @@ html = """
        </div>
    </body>
    </html>
-"""
-return render_template_string(html, result=result, query=query, result_sum=result_sum, status=status, history=history)
+   """
+@app.route("/", methods=["GET", "POST"])
+def home():
+    status = ".Leverage the chatbot's analysis tool for your documents.\nUpload your Document to access chat."
+    result = None
+    query = None
+    result_sum = None
+    history = QuestionAnswer.query.order_by(QuestionAnswer.timestamp.desc()).all()
 
-if __name__ == '__main__':
+    if request.method == "POST":
+        if "file" in request.files:
+            file = request.files["file"]
+            if file.filename:
+                # Save the uploaded file
+                file_path = os.path.join("uploads", file.filename)
+                file.save(file_path)
+
+                # Determine the file type
+                if file.filename.endswith(".pdf"):
+                    print("uploaded pdf n now extracting text")
+                    text = extract_text_from_pdf(file_path)
+                    print("text extracted n now summary time")
+                    summary = summ(text)
+                    summary = format_bullet_points(summary)
+                    new_summary = Summary(content=summary)
+                    db.session.add(new_summary)
+                    db.session.commit()
+
+                    session['summary_id'] = new_summary.id
+                    result_sum = summary
+                    status = "PDF processed and summary generated."
+                    print("summary:- ",result_sum)
+
+                elif file.filename.endswith((".ppt", ".pptx")):
+                       print("uploaded ppt n now extracting text")
+                       text = extract_text_from_ppt(file_path)
+                       print("text extracted n now summary time")
+                       summary = summ(text)
+                       print("summary of text done n extracting images now")
+                       extracted_images = extract_images_from_ppt(file_path)
+                       descriptions = [summary]
+                       print("extracting text from images")
+                       for image_file in extracted_images:
+                           extracted_text = extract_text_from_image(image_file)
+                           descriptions.append(extracted_text)
+                       result = "\n".join(descriptions)
+                       # Save summary to the database
+                       summary = format_bullet_points(summary)
+                       result_sum = Summary(content=summary)
+                       db.session.add(result_sum)
+                       db.session.commit()
+                       session['summary_id'] = result_sum.id
+                       status = "PPT processed and descriptions generated."
+
+                elif file.filename.endswith((".doc", ".docx")):
+                       print("uploaded word doc n extracting text now")
+                       text = read_word_file(file_path)
+                       print("text done now summary time")
+                       summary = summ(text)
+
+                       # Save summary to the database
+                       new_summary = Summary(content=summary)
+                       db.session.add(new_summary)
+                       db.session.commit()
+
+                       session['summary_id'] = new_summary.id
+                       summary = format_bullet_points(summary)
+                       result_sum = summary
+                       status = "Word document processed and summary generated."
+
+        if "user_query" in request.form:
+               user_query = request.form.get("user_query")
+               summary_id = session.get('summary_id', None)
+               if summary_id:
+                   summary = Summary.query.get(summary_id).content
+                   if user_query:
+                       answer = answer_question(user_query, summary)
+                       query = user_query
+                       result = answer if answer else "Sorry, I couldn't find an answer."
+                       result = format_bullet_points(answer)
+                       qa_entry = QuestionAnswer(question=user_query, answer=result)
+                       db.session.add(qa_entry)
+                       db.session.commit()
+                   else:
+                     result = "Please upload a file and generate a summary first."
+
+
+    return render_template_string(html_template, result=result, query=query, result_sum=result_sum, status=status, history=history)
+
+
+# Step 9: Run the Flask app
+if __name__ == "__main__":
     # Run the Flask application
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))

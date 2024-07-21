@@ -541,9 +541,7 @@ html_template = """
 
 if __name__ == '__main__':
        # Create a public URL using ngrok
-       ngrok.set_auth_token("2j08WvZeKaz7M39DhjMDJdgF2zz_78Gz13uGyDZnSkmB4gKyM")
-       public_url = ngrok.connect(5000)
-       print(" * ngrok tunnel: ", public_url)
+       app.run(host='0.0.0.0', port=8080)
 
        # Run the Flask application
        app.run()

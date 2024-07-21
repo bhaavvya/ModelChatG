@@ -21,6 +21,7 @@ from docx import Document
 from datetime import datetime
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import easyocr
 
 # Step 3: Define the Flask app
 app = Flask(__name__)
@@ -99,11 +100,11 @@ def extract_images_from_ppt(ppt_path):
                     f.write(image_bytes.read())
                 image_files.append(image_file_name)
     return image_files
-
-# Function to extract text from an image using OCR
+# Function to extract text from an image using EasyOCR
 def extract_text_from_image(image_path):
-    image = PIL.Image.open(image_path)
-    return pytesseract.image_to_string(image)
+    result = reader.readtext(image_path)
+    extracted_text = "\n".join([res[1] for res in result])
+    return extracted_text
 
 # Extract text from PDF
 def extract_text_from_pdf(pdf_path):

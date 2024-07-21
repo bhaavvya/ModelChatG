@@ -507,7 +507,7 @@ html = """
    </body>
    </html>
 """
-    return render_template_string(html, result=result, query=query, result_sum=result_sum, status=status, history=history)
+return render_template_string(html, result=result, query=query, result_sum=result_sum, status=status, history=history)
 
 if __name__ == '__main__':
     # Run the Flask application

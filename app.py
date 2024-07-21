@@ -33,7 +33,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///summaries.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
+reader = easyocr.Reader(['en'])
 # Define the Summary model
 class Summary(db.Model):
     id = db.Column(db.Integer, primary_key=True)

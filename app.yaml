@@ -1,5 +1,19 @@
 runtime: python39
 
+# Optional: Specify the instance class
+instance_class: F2
+
+# Optional: Configure the environment variables
+env_variables:
+  MY_ENV_VAR: "value"
+
+# Optional: Configure automatic scaling
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 1
+  max_instances: 10
+
+# Optional: Configure handlers
 handlers:
 - url: /.*
   script: auto

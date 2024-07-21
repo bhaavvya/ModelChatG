@@ -270,8 +270,7 @@ def home():
                     status = "Summary not found for the provided context."
             else:
                 status = "No summary available to provide context for the query."
-
-     html = """
+html = """
 <!DOCTYPE html>
    <html lang="en">
    <head>

@@ -101,7 +101,8 @@ def extract_images_from_ppt(ppt_path):
 
 # Function to extract text from an image using OCR
 def extract_text_from_image(image_path):
-    image = Image.open(image_path)
+    image = Image()
+    image = image.open(image_path)
     return pytesseract.image_to_string(image)
 
 # Extract text from PDF

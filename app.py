@@ -273,127 +273,143 @@ def home():
 
      html = """
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    <title>Document Processor</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            background-color: rgb(4,4,102);
-            height: 100%;
-            width: 100%;
-        }
-        .main {
-            background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
-            margin: 40px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            color: #533a8c;
-            height: 645px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            color: rgb(4,4,102);
-        }
-        .model {
-            font-weight: bold;
-        }
-        .chat-window {
-            border: 1px solid rgb(4,4,102);
-            padding: 10px;
-            height: 79%;
-            overflow-y: scroll;
-            margin-bottom: 10px;
-        }
-        .chat-message {
-            margin-bottom: 10px;
-        }
-        .chat-message p {
-            margin: 0;
-            justify-content: flex-end;
-        }
-        .upload-file {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 0px;
-        }
-        .user-query {
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+       <title>Document Processor</title>
+       <style>
+           body {
+               /* background-image: #ffff; */
+               font-family: sans-serif;
+               background-color: rgb(4,4,102);
+               height:100%;
+               width:100%;
+
+           }
+           .main {
+               background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+               /* max-width: 620px; */
+               /* background-color: white; */
+               margin: 40px;
+               padding: 20px;
+               border: 1px solid #ddd;
+               border-radius: 5px;
+               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+               color: #533a8c;
+               height: 645px;
+           }
+           .header {
+               display: flex;
+               justify-content: space-between;
+               margin-bottom: 10px;
+               color: rgb(4,4,102);
+           }
+           .model {
+               font-weight: bold;
+           }
+           .chat-window {
+               border: 1px solid rgb(4,4,102);
+               padding: 10px;
+               height: 79%;
+               overflow-y: scroll;
+               margin-bottom: 10px;
+           }
+           .chat-message {
+               margin-bottom: 10px;
+           }
+           .chat-message p {
+               margin: 0;
+               justify-content:flex-end;
+           }
+          .upload-file{
+            display:flex;
+            flex-direction:row;
+            justify-content:space-between;
+            align-items:center;
+            margin-top:0px;
+          }
+           .user-query {
+
             padding: 10px;
             border-radius: 10px;
             margin-bottom: 10px;
             text-align: center;
-            display: flex;
-            margin-right: 300px;
-            width: 100%;
-            max-width: 600px;
-            justify-content: flex-end;
-            align-items: center;
-        }
-        .chat-response {
-            text-align: left;
-            background-color: #8f8f8f;
-        }
-        .output-status {
-            font-size: 0.9em;
-            color: gray;
-            text-align: center;
-            margin-top: 10px;
-        }
-        .input-area {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-        }
-        .input-area input[type="text"] {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            justify-content: center;
-            align-items: center;
-            align-content: center;
-            flex-grow: 1;
-            margin-right: 50px;
-        }
-        .input-area button[type="upload"] {
-            border: 1px solid #ddd;
-            border-radius: 15px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            width: 100px;
-            height: 40px;
-        }
-        .input-area button {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-        }
-        .input-area button:hover {
-            background-color: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);
-        }
-        .input-area input[type='file'] {
-            display: none;
-            font-size: large;
-        }
-        .btn_submit {
-            width: 90px;
-            height: 42px;
-            border-radius: 15px;
-        }
-        /* Responsive design */
+            display:flex;
+            margin-right:300px;
+            width:100%;
+            max-width:600px;
+            justify-content:flex-end;
+            align-items:center;
+           }
+           .chat-response {
+               text-align: left;
+               background-color:#8f8f8f
+           }
+           .output-status {
+               font-size: 0.9em;
+               color: gray;
+               text-align: center;
+               margin-top: 10px;
+           }
+           .input-area {
+               display: flex;
+               flex-direction: row;
+              #  align-items: center;
+              #  justify-content: flex-end;
+               width: 100%;
+              #  align-content: center;
+           }
+           .input-area input[type="text"] {
+               padding: 10px;
+               border: 1px solid #ddd;
+               border-radius: 5px;
+              #  width: 100%;
+              #  max-width:600px;
+              #  margin-left: 0px;
+               justify-content: center;
+               align-items: center;
+               align-content: center;
+               flex-grow: 1;
+              margin-right: 50px;
+
+           }
+
+           .input-area button[type="upload"] {
+               border: 1px solid #ddd;
+               border-radius: 15px;
+               background-color: #007bff;
+               color: white;
+               cursor: pointer;
+               width:100px;
+              height:40px;
+           }
+           .input-area button {
+               padding: 10px;
+               border: 1px solid #ddd;
+               border-radius: 5px;
+               background-color: #007bff;
+               color: white;
+               cursor: pointer;
+           }
+           .input-area button:hover {
+               background-color: linear-gradient(to right, #ff8177 0%, #ff867a 0%, #ff8c7f 21%, #f99185 52%, #cf556c 78%, #b12a5b 100%);
+           }
+           .input-area input[type='file'] {
+              display:none
+               font-size: large;
+           }
+           .btn_submit{
+            # justify-content-right;
+            width:90px;
+            height:42px;
+            border-radius:15px 15px 15px 15px;
+            # margin-right:30px
+           }
+
+             /* Responsive design */
         @media (min-width: 600px) {
             .input-area {
                 flex-direction: row;
@@ -401,11 +417,10 @@ def home():
                 width: 100%;
             }
             .input-area input[type="text"] {
-                margin-top: 0px;
+              margin-top:0px;
                 width: 600px; /* 70% width on medium and large screens */
                 max-width: 600px;
             }
-        }
         #status-message {
             display: flex;
             align-items: center;
@@ -433,64 +448,64 @@ def home():
                 opacity: 1;
             }
         }
-        #boxing {
-            background-color: #0f0f0f;
-            color: white;
+        #boxing{
+          background-color:#0f0f0f
+          color:white
         }
-    </style>
-    <script>
+       </style>
+           <script>
         function showProcessingMessage() {
             document.getElementById('status-message').innerHTML = 'Summarizing your document<span class="dots">.</span><span class="dots">.</span><span class="dots">.</span>';
         }
     </script>
-</head>
-<body>
-    <div class="main">
-        <div class="header">
-            <span class="model"><h2>Model: ChatG</h2></span>
-            <span><h3><i>So what's on your mind right now?</i></h3></span>
-        </div>
-        <div class="chat-window" id="chat-window">
-            <p id="status-message"></p>
-            {% if query %}
-            <div class="chat-message user-query" id="boxing">
-                <p style="background-color:rgb(4,4,102);color:#ffff;border-radius:20px 20px 20px 20px;padding:15px"><strong>Question: {{ query }}</strong></p>
-            </div>
-            {% endif %}
-            {% if result_sum %}
-            <p style="background-color:rgb(4,4,102);color:#ffff;border-radius:20px 20px 20px 20px;padding:15px"><b>{{ result_sum }}</b></p><br><br>
-            {% endif %}
-            {% if result %}
-            <div class="chat-message user-response">
-                <p style="background-color:rgb(4,4,102);color:#ffff;border-radius:20px 20px 20px 20px;padding:15px"><strong>Response-> {{ result }}</strong></p>
-            </div>
-            {% endif %}
-            <div class="output-status">Upload the PDF, PPT OR Word and get its analysis and ask your questions{{ status }}</div>
-        </div>
-        <div style="display: flex; align-items: center;">
-            <div class="input-area">
-                <div style="display: flex; flex-direction: row; justify-content: flex-center; align-items: center; margin-left: 20%">
-                    <div class="upload-file">
-                        <form method="post" enctype="multipart/form-data">
-                            <input type="file" name="file" id="file" accept=".pdf,.ppt,.pptx,.doc,.docx" hidden>
-                            <label for="file">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                                    <path d="M19 13h-6v6h-2v-6h-6v-2h6v-6h2v6h6v2zm-8-9c-1.1 0-2.9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2.9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                                </svg>
-                            </label>
-                            <button type="submit" onclick="showProcessingMessage()">Upload</button>
-                        </form>
-                    </div>
-                    <form method="post" enctype="multipart/form-data">
-                        <input style="border-radius: 35px; padding: 20px; margin-left: 20px; margin-right: 20px" type="text" name="user_query" placeholder="Ask a question...">
-                        <button class="btn_submit" type="submit">Ask</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+   </head>
+   <body>
+       <div class="main">
+           <div class="header">
+               <span class="model"><h2>Model: ChatG</h2></span>
+               <span><h3><i>So what's on your mind right now?</i></h3></span>
+               <!-- <span><h3><i>SO WHAT'S ON YOUR MIND NOW?</i></h3></span> -->
+
+           </div>
+           <div class="chat-window" id="chat-window">
+<p id="status-message"></p>
+               {% if query %}
+               <div class="chat-message user-query" id="boxing">
+               <p style="background-color:rgb(4,4,102);color:#ffff;border-radius:20px 20px 20px 20px;padding:15px"><strong>Question: {{ query }}</strong> </p>
+               </div>
+               {% endif %}
+                {% if result_sum %}
+                       <p style="background-color:rgb(4,4,102);color:#ffff;border-radius:20px 20px 20px 20px;padding:15px"><b>{{ result_sum }}</b></p><br><br>
+                    {% endif %}
+               {% if result %}
+               <div class="chat-message user-response">
+                   <p style="background-color:rgb(4,4,102);color:#ffff;border-radius:20px 20px 20px 20px;padding:15px"><strong>Response-> {{ result }}</strong> </p>
+               </div>
+               {% endif %}
+               <div class="output-status">Upload the PDF,PPT OR Word and get its analysis and ask your questions{{ status }}</div>
+           </div>
+           <div style="display: flex; align-items: center;">
+           <div class="input-area">
+  <div style="display:flex;flex-direction:row;justify-content:flex-center;align-items:center;margin-left:20%">
+    <div class="upload-file">
+      <form method="post" enctype="multipart/form-data">
+        <input type="file" name="file" id="file" accept=".pdf,.ppt,.pptx,.doc,.docx" hidden>
+        <label for="file">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M19 13h-6v6h-2v-6h-6v-2h6v-6h2v6h6v2zm-8-9c-1.1 0-2.9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2.9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        </label>
+        <button type="submit" onclick="showProcessingMessage()">Upload</button>
+      </form>
     </div>
-</body>
-</html>
+    <form method="post" enctype="multipart/form-data">
+    <input style="border-radius:35px;padding:20px;margin-left:20px;margin-right:20px" type="text" name="user_query" placeholder="Ask a question...">
+    <button class="btn_submit" type="submit">Ask</button>
+    </form>
+  </div>
+</div>
+           </div>
+       </div>
+   </body>
+   </html>
 """
     return render_template_string(html, result=result, query=query, result_sum=result_sum, status=status, history=history)
 

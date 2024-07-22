@@ -1,3 +1,4 @@
+import nltk
 import os
 import io
 from flask import Flask, render_template_string, request, session

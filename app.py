@@ -551,8 +551,8 @@ def home():
             qa_entry = QuestionAnswer(question=user_query, answer=result)
             db.session.add(qa_entry)
             db.session.commit()
-        else:
-            result = "Please upload a file and generate a summary first."
+            else:
+                result = "Please upload a file and generate a summary first."
 
 
 

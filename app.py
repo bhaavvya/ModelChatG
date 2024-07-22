@@ -531,12 +531,15 @@ def home():
 
             if user_query:
                 if user_query.lower() == 'question history':
+                    query = user_query
                     qa_entries = QuestionAnswer.query.order_by(QuestionAnswer.timestamp.desc()).all()
                     result = "\n".join([f"Q: {qa.question}\nA: {qa.answer}" for qa in qa_entries])
                 if user_query.lower() == 'summary history':
+                    query = user_query
                     summaries = Summary.query.order_by(Summary.timestamp).all()
                     result = "\n".join([f"Summary {i+1}:\n{summary.content}" for i, summary in enumerate(summaries)])
                 if user_query.startswith('[integrate]'):
+                    query = user_query
                     summaries = Summary.query.order_by(Summary.timestamp).all()
                     combined_summary = " ".join(summary.content for summary in summaries)
                     combined_summary = preprocess_text(combined_summary)
@@ -544,6 +547,7 @@ def home():
                     answer = answer_question(user_query, combined_summary)
                     result = answer if answer else "Sorry, I couldn't find an answer."
                 else:
+                    query = user_query
                     answer = answer_question(user_query, summary)
                     result = answer if answer else "Sorry, I couldn't find an answer."
 

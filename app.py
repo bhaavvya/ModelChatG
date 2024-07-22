@@ -528,25 +528,32 @@ def home():
             summary_id = session.get('summary_id', None)
             if summary_id:
                 summary = Summary.query.get(summary_id).content
-        
+
             if user_query:
-                if user_query.startswith('[integrate]'):
+                if user_query.lower() == 'question history':
+                    qa_entries = QuestionAnswer.query.order_by(QuestionAnswer.timestamp.desc()).all()
+                    result = "\n".join([f"Q: {qa.question}\nA: {qa.answer}" for qa in qa_entries])
+                elif user_query.lower() == 'summary history':
+                    summaries = Summary.query.order_by(Summary.timestamp).all()
+                    result = "\n".join([f"Summary {i+1}:\n{summary.content}" for i, summary in enumerate(summaries)])
+                elif user_query.startswith('[integrate]'):
                     summaries = Summary.query.order_by(Summary.timestamp).all()
                     combined_summary = " ".join(summary.content for summary in summaries)
                     combined_summary = preprocess_text(combined_summary)
                     user_query = user_query[len('[integrate]'):].strip()  # Remove the [integrate] keyword
                     answer = answer_question(user_query, combined_summary)
+                    result = answer if answer else "Sorry, I couldn't find an answer."
                 else:
                     answer = answer_question(user_query, summary)
-            
-                query = user_query
-                result = answer if answer else "Sorry, I couldn't find an answer."
-                result = format_bullet_points(result)
-                qa_entry = QuestionAnswer(question=user_query, answer=result)
-                db.session.add(qa_entry)
-                db.session.commit()
-            else:
-                result = "Please upload a file and generate a summary first."
+                    result = answer if answer else "Sorry, I couldn't find an answer."
+
+            result = format_bullet_points(result)
+            qa_entry = QuestionAnswer(question=user_query, answer=result)
+            db.session.add(qa_entry)
+            db.session.commit()
+        else:
+            result = "Please upload a file and generate a summary first."
+
 
 
 

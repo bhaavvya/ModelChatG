@@ -533,10 +533,10 @@ def home():
                 if user_query.lower() == 'question history':
                     qa_entries = QuestionAnswer.query.order_by(QuestionAnswer.timestamp.desc()).all()
                     result = "\n".join([f"Q: {qa.question}\nA: {qa.answer}" for qa in qa_entries])
-                elif user_query.lower() == 'summary history':
+                if user_query.lower() == 'summary history':
                     summaries = Summary.query.order_by(Summary.timestamp).all()
                     result = "\n".join([f"Summary {i+1}:\n{summary.content}" for i, summary in enumerate(summaries)])
-                elif user_query.startswith('[integrate]'):
+                if user_query.startswith('[integrate]'):
                     summaries = Summary.query.order_by(Summary.timestamp).all()
                     combined_summary = " ".join(summary.content for summary in summaries)
                     combined_summary = preprocess_text(combined_summary)

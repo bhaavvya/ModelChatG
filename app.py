@@ -547,10 +547,10 @@ def home():
                     answer = answer_question(user_query, summary)
                     result = answer if answer else "Sorry, I couldn't find an answer."
 
-            result = format_bullet_points(result)
-            qa_entry = QuestionAnswer(question=user_query, answer=result)
-            db.session.add(qa_entry)
-            db.session.commit()
+                result = format_bullet_points(result)
+                qa_entry = QuestionAnswer(question=user_query, answer=result)
+                db.session.add(qa_entry)
+                db.session.commit()
             else:
                 result = "Please upload a file and generate a summary first."
 

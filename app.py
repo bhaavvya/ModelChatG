@@ -536,7 +536,7 @@ def home():
                     result = "\n".join([f"Q: {qa.question}\nA: {qa.answer}" for qa in qa_entries])
                 if user_query.lower() == 'summary history':
                     query = user_query
-                    summaries = Summary.query.order_by(Summary.timestamp).all()
+                    summaries = Summary.query.order_by(Summary.id.desc()).all()
                     result = "\n".join([f"Summary {i+1}:\n{summary.content}" for i, summary in enumerate(summaries)])
                 if user_query.startswith('[integrate]'):
                     query = user_query

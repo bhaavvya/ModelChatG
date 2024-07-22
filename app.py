@@ -1,6 +1,7 @@
 
 import nltk
 nltk.download('stopwords')
+nltk.download('punkt')
 import os
 import io
 from flask import Flask, render_template_string, request, session
